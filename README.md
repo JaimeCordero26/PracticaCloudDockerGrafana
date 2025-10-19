@@ -227,28 +227,48 @@ Luego verificar en Flower (`http://localhost:5555`) que la tarea se ejecutó cor
 ### 📁 Estructura del Proyecto
 
 ```
-cloud_practica/
-├── backend/
-│ ├── app/ # Aplicación Django
-│ │ ├── views.py # Endpoints de la API
-│ │ ├── urls.py # Rutas
-│ │ └── tasks.py # Tareas de Celery
-│ ├── backend/
-│ │ ├── settings.py # Configuración Django
-│ │ ├── celery.py # Configuración Celery
-│ │ └── init.py # Inicialización Celery
-│ ├── Dockerfile # Imagen Docker de Django
-│ ├── requirements.txt # Dependencias Python
-│ └── manage.py # CLI de Django
-├── frontend/
-│ ├── src/
-│ │ ├── App.vue # Componente principal
-│ │ └── main.js # Entry point
-│ ├── Dockerfile # Imagen Docker de Vue
-│ ├── package.json # Dependencias Node
-│ └── vite.config.js # Configuración Vite
-├── docker-compose.yml # Orquestación de servicios
-└── promtail-config.yml # Configuración de logs (opcional)
+PracticaCloudDockerGrafana/
+.
+├── backend
+│   ├── app
+│   ├── backend
+│   ├── celerybeat-schedule
+│   ├── Dockerfile
+│   ├── manage.py
+│   └── requirements.txt
+├── docker-compose.yml
+├── evidences
+│   ├── Celery beat.png
+│   ├── celery monitor.png
+│   ├── Celery worker.png
+│   ├── curl.png
+│   ├── docker compose build.png
+│   ├── docker ps.png
+│   ├── evidences.png
+│   ├── frontend vue.png
+│   ├── Grafana dashboard.png
+│   ├── Grafana login.png
+│   ├── Logs de django irl.png
+│   ├── logs.txt
+│   ├── loki conf.png
+│   ├── Loki save.png
+│   ├── PostgreSQL.png
+│   ├── prueba de tarea celery.png
+│   ├── Redis.png
+│   ├── Screenshot_20251019_095755.png
+│   ├── Tarea celery en monitor.png
+│   └── tasks monitor.png
+├── frontend
+│   ├── Dockerfile
+│   ├── index.html
+│   ├── node_modules
+│   ├── package.json
+│   ├── public
+│   ├── README.md
+│   ├── src
+│   └── vite.config.js
+├── promtail-config.yml
+└── README.md
 ```
 
 
