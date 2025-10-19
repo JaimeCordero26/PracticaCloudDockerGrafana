@@ -1,0 +1,89 @@
+services:
+  promtail:
+    image: grafana/promtail:2.9.3
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/promtail.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: -config.file=/etc/promtail/promtail.yaml
+    depends_on:
+      - loki
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  django:
+    build: ./backend
+    environment:
+      DJANGO_SETTINGS_MODULE: backend.settings
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    command: bash -lc "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  celery_worker:
+    build: ./backend
+    depends_on: [django, redis]
+    volumes:
+      - ./backend:/app
+    command: celery -A backend worker -l info
+
+  celery_beat:
+    build: ./backend
+    depends_on: [django, redis]
+    volumes:
+      - ./backend:/app
+    command: celery -A backend beat -l info
+
+  flower:
+    image: mher/flower
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on: [redis, celery_worker]
+
+  loki:
+    image: grafana/loki:2.9.3
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on: [loki]
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+  vue:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0 --port 8080
+
+volumes:
+  pgdata:
+  grafana-data:
